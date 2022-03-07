@@ -50,7 +50,7 @@ def main(
     raise Exception('Failed to create bucket named "{}"'.format(target_bucket_name))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print('Attempting to cerate S3 bucket "{}"'.format(sys.argv[1]))
     main(target_bucket_name=sys.argv[1], boto3_lib=boto3)
 
