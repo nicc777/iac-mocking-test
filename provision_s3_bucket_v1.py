@@ -46,7 +46,7 @@ def main(
             bucket_name=target_bucket_name
         )
         print('Location: {}'.format(location))
-        sys.exit(0)
+        return
     raise Exception('Failed to create bucket named "{}"'.format(target_bucket_name))
 
 
@@ -186,3 +186,16 @@ class TestGetS3Buckets(unittest.TestCase):
             with self.assertRaises(Exception) as context:
                 create_s3_bucket(client=get_aws_client(boto3_library=boto3, service='s3', region='TEST_REGION2'), bucket_name=test_target_bucket_name)
 
+
+class TestMainFunction(unittest.TestCase):
+
+    def test_main_success(self):
+        with patch.object(boto3, 'client', return_value=MockS3Client(list_bucket_response=responses['bucket_names_with_target_bucket_excluded'])) as mock_method:
+            result = main(target_bucket_name=test_target_bucket_name, boto3_lib=boto3)
+            self.assertIsNone(result)
+            
+
+    def test_main_fail(self):
+        with patch.object(boto3, 'client', return_value=MockS3Client(list_bucket_response=responses['bucket_names_with_target_bucket_included'])) as mock_method:
+            with self.assertRaises(Exception) as context:
+                main(target_bucket_name=test_target_bucket_name, boto3_lib=boto3)
