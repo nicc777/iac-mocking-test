@@ -20,7 +20,15 @@ def get_s3_bucket_names(client)->list:
 
 
 def create_s3_bucket(client, bucket_name: str)->str:
-    response = client.create_bucket(Bucket=bucket_name)
+    if AWS_REGION != 'us-east-1':
+        response = client.create_bucket(
+            Bucket=bucket_name,
+            CreateBucketConfiguration={
+                'LocationConstraint': AWS_REGION
+            }
+        )
+    else:    
+        response = client.create_bucket(Bucket=bucket_name)
     return response['Location']
 
 
@@ -32,13 +40,17 @@ def main(
         client=get_aws_client(boto3_library=boto3_lib, service='s3', region=AWS_REGION)
     )
     if target_bucket_name not in bucket_names:
-        create_s3_bucket(
+        location = create_s3_bucket(
             client=get_aws_client(boto3_library=boto3_lib, service='s3', region=AWS_REGION),
             bucket_name=target_bucket_name
         )
+        print('Location: {}'.format(location))
+        sys.exit(0)
+    raise Exception('Failed to create bucket named "{}"'.format(target_bucket_name))
 
 
 if __name__ == '__main__':
+    print('Attempting to cerate S3 bucket "{}"'.format(sys.argv[1]))
     main(target_bucket_name=sys.argv[1], boto3_lib=boto3)
 
 
