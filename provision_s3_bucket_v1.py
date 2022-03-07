@@ -20,6 +20,7 @@ def get_s3_bucket_names(client)->list:
 
 
 def create_s3_bucket(client, bucket_name: str)->str:
+    # refer to https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html for reasons why we check for the region. See section titled "Example 3: To create a bucket outside of the ``us-east-1`` region"
     if AWS_REGION != 'us-east-1':
         response = client.create_bucket(
             Bucket=bucket_name,
