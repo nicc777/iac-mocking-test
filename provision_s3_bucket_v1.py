@@ -108,7 +108,6 @@ responses = {
 }
 
 
-
 class MockS3Client:
     
     def __init__(
@@ -193,7 +192,6 @@ class TestMainFunction(unittest.TestCase):
         with patch.object(boto3, 'client', return_value=MockS3Client(list_bucket_response=responses['bucket_names_with_target_bucket_excluded'])) as mock_method:
             result = main(target_bucket_name=test_target_bucket_name, boto3_lib=boto3)
             self.assertIsNone(result)
-            
 
     def test_main_fail(self):
         with patch.object(boto3, 'client', return_value=MockS3Client(list_bucket_response=responses['bucket_names_with_target_bucket_included'])) as mock_method:
